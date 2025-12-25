@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnosis Result</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #E9F7F7; /* Soft Light Blue */
+        }
+        .container {
+            background-color: white; /* White background for content */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        h1 {
+            color: #1ABC9C; /* Teal color for headings */
+        }
+        .alert {
+            background-color: #D4EDDA; /* Light green for success alert */
+            border-color: #C3E6CB; /* Slightly darker green for border */
+        }
+        .btn-primary {
+            background-color: #1ABC9C; /* Teal button */
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Diagnosis Result</h1>
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">Predicted Disease: {{ disease }}</h4>
+            <p>{{ description }}</p>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Precautions:</h5>
+                <ul>
+                    {% for precaution in precautions %}
+                        <li>{{ precaution }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5>Medications:</h5>
+                <ul>
+                    {% for medication in medications %}
+                        <li>{{ medication }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h5>Diets:</h5>
+                <ul>
+                    {% for diet in diets %}
+                        <li>{{ diet }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5>Workout Routine:</h5>
+                <p>{{ workout }}</p>
+            </div>
+        </div>
+        <a href="{{ url_for('index') }}" class="btn btn-primary mt-4">Go Back</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #E9F7F7; /* Soft Light Blue */
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background-color: #1ABC9C; /* Teal */
+        padding: 10px;
+        text-align: center;
+        color: white;
+    }
+
+    .header h1 {
+        margin: 0;
+    }
+
+    nav {
+        margin: 10px 0;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-size: 18px;
+    }
+
+    nav a:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        background-color: white;
+        margin: 20px auto;
+        padding: 20px;
+        max-width: 600px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #34495E; /* Dark Gray */
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #34495E; /* Dark Gray */
+    }
+
+    input[type="text"], input[type="password"], input[type="date"], input[type="time"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #BDC3C7; /* Light Gray */
+        border-radius: 4px;
+    }
+
+    button {
+        background-color: #3498DB; /* Light Blue */
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #2980B9; /* Darker Blue on hover */
+    }
+
+    .results {
+        margin-top: 20px;
+        background-color: #e6ffe6; /* Light Green */
+        padding: 15px;
+        border-left: 5px solid #1ABC9C; /* Teal */
+    }
+
+    .error {
+        color: red;
+    }
+
+    footer {
+        text-align: center;
+        height: 25px;
+        background-color: #1ABC9C; /* Teal */
+        color: white;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+
+<body>
+    <div class="header">
+        <h1>Health Prediction System</h1>
+       <nav>
+    <a href="{{ url_for('index') }}">Home</a>
+<a id="header-book-appointment" href="{{ url_for('book_appointment') }}">Book Appointment</a>
+<a href="{{ url_for('contact') }}">Contact Us</a>
+    <a href="{{ url_for('developer') }}">Developer</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+               <a href="{{ url_for('history') }}">History</a>
+
+
+
+
+</nav>
+
+    </div>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Health Prediction System</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="background-color: #E9F7F7; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <h2 style="color: #1ABC9C;">Book an Appointment</h2>
+    <form action="{{ url_for('book_appointment') }}" method="POST">
+        <label for="appointment_date">Date:</label>
+        <input type="date" id="appointment_date" name="appointment_date" required style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="appointment_time">Time:</label>
+        <input type="time" id="appointment_time" name="appointment_time" required style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <button type="submit" style="background-color: #1ABC9C; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Book Appointment</button>
+    </form>
+</div>
+{% endblock %}

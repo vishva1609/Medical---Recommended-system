@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History</title>
+</head>
+<body>
+    <h1>Welcome to the Chat Application</h1>
+    <form action="/history" method="post">
+        <label for="username">Enter Username:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">View History</button>
+    </form>
+
+    {% if chat_history is defined %}
+        <h2>Chat Records for {{ request.form['username'] }}</h2>
+        <table border="1">
+            <tr>
+                <th>Username</th>
+                <th>Symptoms</th>
+                <th>Predicted Disease</th>
+            </tr>
+            {% for record in chat_history %}
+            <tr>
+                <td>{{ record[0] }}</td>
+                <td>{{ record[1] }}</td>
+                <td>{{ record[2] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if chat_history|length == 0 %}
+        <p>No chat history found for this user.</p>
+        {% endif %}
+    {% endif %}
+
+    <a href="/">Back to Home</a>
+</body>
+</html>
+{% endblock %}

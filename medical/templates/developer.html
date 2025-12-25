@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E9F7F7; /* Soft Light Blue */
+        }
+
+        header {
+            background-color: #1ABC9C; /* Teal */
+            padding: 10px;
+            text-align: center;
+            color: white; /* White text for contrast */
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white; /* White links */
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        footer {
+            background-color: #1ABC9C; /* Teal */
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            color: white; /* White text for contrast */
+        }
+
+        section {
+            background-color: white; /* White background for sections */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333; /* Dark color for headings */
+        }
+
+        p {
+            line-height: 1.6; /* Improve readability */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Developer Information</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                <li><a href="{{ url_for('blog') }}">Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Meet the Developer</h2>
+            <p>Welcome to the Health App! I am [Your Name], the developer behind this project. With a passion for technology and healthcare, my goal is to create solutions that make healthcare more accessible and user-friendly. I believe in the power of innovation to enhance patient care and improve health outcomes.</p>
+            <p>Feel free to reach out with any questions or feedback!</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Your Health App</p>
+    </footer>
+</body>
+</html>

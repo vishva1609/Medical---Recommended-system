@@ -1,0 +1,98 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #E9F7F7; /* Soft Light Blue */
+}
+
+header {
+    background-color: #1ABC9C; /* Teal */
+    padding: 10px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    color: white; /* White text for contrast */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white; /* White links */
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Main Content Styles */
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+}
+
+footer {
+    background-color: #1ABC9C; /* Teal */
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    color: white; /* White text for contrast */
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin: 5px 0;
+    color: #34495E; /* Dark Gray */
+}
+
+form input, form textarea {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #BDC3C7; /* Light Gray */
+    border-radius: 5px;
+}
+
+/* Form Styles */
+form button {
+    padding: 10px;
+    background-color: #3498DB; /* Light Blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px; /* Add space between buttons */
+}
+
+form button:hover {
+    background-color: #2980B9; /* Darker Blue on hover */
+}
+
+
+/* List Styles */
+ul {
+    padding: 0;
+    list-style: none;
+}
+
+ul li {
+    margin-bottom: 10px;
+}

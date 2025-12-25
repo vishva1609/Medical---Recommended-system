@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="background-color: #E9F7F7; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <h2 style="color: #1ABC9C;">Enter Your Symptoms</h2>
+    <form id="symptoms-form" aria-label="Symptom submission form">
+        <label for="symptoms-input">Symptoms (comma-separated):</label>
+        <input type="text" id="symptoms-input" placeholder="e.g., headache, fever" required aria-label="Input symptoms">
+        <button type="submit" class="btn">Send</button>
+    </form>
+
+    <div id="chat-box" style="margin: 20px;"></div>
+
+    <div id="details-container" style="display: none; margin-top: 20px;">
+        <div id="details-display"></div>
+    </div>
+
+    <div id="options-container" style="display: none; margin-top: 20px;">
+        <button id="show-details" class="btn">Show Details</button>
+        <button id="chat-book-appointment" class="btn">Book Appointment</button>
+    </div>
+</div>
+
+<style>
+    .btn {
+        background-color: #1ABC9C;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
+    }
+
+    .btn:hover {
+        background-color: #16A085;
+    }
+
+    /* Spinner styles */
+    .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top: 4px solid #1ABC9C;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<script>
+    let appointmentBooked = false;
+    let shownDetails = {};
+    let bookedAppointment = null;
+
+    document.getElementById('symptoms-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        sendSymptoms();
+    });
+
+    function sendSymptoms() {
+        let symptoms = document.getElementById('symptoms-input').value;
+        document.getElementById('chat-box').innerHTML += `
+            <div class="chat-message user">
+                <p>${symptoms}</p>
+            </div>
+            <div class="chat-message bot">
+                <p>Processing... <span class="spinner"></span></p>
+            </div>
+        `;
+        document.getElementById('symptoms-input').value = ""; // Clear input
+
+        fetch('/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symptoms: symptoms })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.chat-message.bot:last-child p').innerText = ""; // Clear processing message
+            if (data.error) {
+                document.getElementById('chat-box').innerHTML += `
+                    <div class="chat-message bot">
+                        <p>${data.error}</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('chat-box').innerHTML += `
+                    <div class="chat-message bot">
+                        <p>You have ${data.predicted_disease}. Please choose an option below.</p>
+                    </div>
+                `;
+                document.getElementById('options-container').style.display = 'flex';
+
+                setupDetails(data);
+                setupAppointment(data);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('chat-box').innerHTML += `
+                <div class="chat-message bot">
+                    <p>There was an error processing your request.</p>
+                </div>
+            `;
+        });
+    }
+
+    function setupDetails(data) {
+        document.getElementById('show-details').addEventListener('click', function() {
+            document.getElementById('details-container').style.display = 'block';
+            document.getElementById('details-display').innerHTML = `
+                <div class="chat-message bot">
+                    <p>Select a detail to view:</p>
+                    <button class="detail-btn" data-type="description">Description</button>
+                    <button class="detail-btn" data-type="precautions">Precautions</button>
+                    <button class="detail-btn" data-type="medications">Medications</button>
+                    <button class="detail-btn" data-type="diet">Diet</button>
+                    <button class="detail-btn" data-type="workout">Workout</button>
+                </div>
+            `;
+
+            document.querySelectorAll('.detail-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    let detailType = this.getAttribute('data-type');
+                    displayDetail(data, detailType);
+                });
+            });
+        });
+    }
+
+    function displayDetail(data, detailType) {
+        if (!shownDetails[detailType]) {
+            let detailContent = '';
+
+            switch (detailType) {
+                case 'description':
+                    detailContent = `<p>${data.dis_des}</p>`;
+                    break;
+                case 'precautions':
+                    detailContent = `<ul>${data.precautions.map(p => `<li>${p}</li>`).join('')}</ul>`;
+                    break;
+                case 'medications':
+                    detailContent = `<p>${data.medications}</p>`;
+                    break;
+                case 'diet':
+                    detailContent = `<p>${data.diet}</p>`;
+                    break;
+                case 'workout':
+                    detailContent = `<p>${data.workout}</p>`;
+                    break;
+            }
+
+            document.getElementById('chat-box').innerHTML += `
+                <div class="chat-message bot">
+                    <h4>${detailType.charAt(0).toUpperCase() + detailType.slice(1)}:</h4>
+                    ${detailContent}
+                </div>
+            `;
+
+            shownDetails[detailType] = true;
+        }
+    }
+
+    function setupAppointment(data) {
+        document.getElementById('chat-book-appointment').addEventListener('click', function() {
+            if (!appointmentBooked) {
+                displayAppointmentForm();
+            } else {
+                displayUpdateForm();
+            }
+        });
+    }
+
+    function displayAppointmentForm() {
+    const today = new Date();
+    const minDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    document.getElementById('chat-box').innerHTML += `
+        <div class="chat-message bot">
+            <p>Please enter your preferred appointment date and time:</p>
+            <form id="book-appointment-form">
+                <label for="appointment_date">Date:</label>
+                <input type="date" id="appointment_date" name="appointment_date" min="${minDate}" required aria-label="Appointment date">
+                <label for="appointment_time">Time:</label>
+                <select id="appointment_time" name="appointment_time" required aria-label="Appointment time">
+                    ${generateTimeOptions()}
+                </select>
+                <button type="submit" class="btn">Book Appointment</button>
+            </form>
+        </div>
+    `;
+
+    // Clear appointment fields after submission
+    document.getElementById('book-appointment-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        let date = document.getElementById('appointment_date').value;
+        let time = document.getElementById('appointment_time').value;
+
+        fetch('/book_appointment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ appointment_date: date, appointment_time: time })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('chat-box').innerHTML += `
+                    <div class="chat-message bot">
+                        <p>${data.error}</p>
+                    </div>
+                `;
+            } else {
+                bookedAppointment = { date, time }; // Store booked appointment
+                document.getElementById('chat-box').innerHTML += `
+                    <div class="chat-message user">
+                        <p style="font-weight: bold; color: black;">
+                            <span style="color: red;">Appointment booked for ${date} at ${time}.</span>
+                        </p>
+                    </div>
+                `;
+                appointmentBooked = true;
+                document.getElementById('chat-book-appointment').innerText = "Update Appointment";
+
+                // Hide the appointment form after booking
+                document.getElementById('book-appointment-form').style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('chat-box').innerHTML += `
+                <div class="chat-message bot">
+                    <p>There was an error booking your appointment.</p>
+                </div>
+            `;
+        });
+    });
+}
+
+
+   function displayUpdateForm() {
+    const today = new Date();
+    const minDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    document.getElementById('chat-box').innerHTML += `
+        <div class="chat-message bot">
+            <p>Current Appointment: ${bookedAppointment.date} at ${bookedAppointment.time}</p>
+            <p>Would you like to update it?</p>
+            <form id="update-appointment-form">
+                <label for="new_appointment_date">New Date:</label>
+                <input type="date" id="new_appointment_date" name="new_appointment_date" min="${minDate}" required aria-label="New appointment date">
+                <label for="new_appointment_time">New Time:</label>
+                <select id="new_appointment_time" name="new_appointment_time" required aria-label="New appointment time">
+                    ${generateTimeOptions()}
+                </select>
+                <button type="submit" class="btn">Update Appointment</button>
+            </form>
+        </div>
+    `;
+
+    // Clear appointment fields after submission
+    document.getElementById('update-appointment-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        let newDate = document.getElementById('new_appointment_date').value;
+        let newTime = document.getElementById('new_appointment_time').value;
+
+        fetch('/update_appointment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ new_appointment_date: newDate, new_appointment_time: newTime })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('chat-box').innerHTML += `
+                    <div class="chat-message bot">
+                        <p>${data.error}</p>
+                    </div>
+                `;
+            } else {
+                bookedAppointment = { date: newDate, time: newTime }; // Update booked appointment
+                document.getElementById('chat-box').innerHTML += `
+                    <div class="chat-message user">
+                        <p style="font-weight: bold; color: black;">
+                            <span style="color: red;">Appointment updated to ${newDate} at ${newTime}.</span>
+                        </p>
+                    </div>
+                `;
+
+                // Hide the update form after updating
+                document.getElementById('update-appointment-form').style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('chat-box').innerHTML += `
+                <div class="chat-message bot">
+                    <p>There was an error updating your appointment.</p>
+                </div>
+            `;
+        });
+    });
+}
+
+
+    function generateTimeOptions() {
+        let options = '';
+        for (let hour = 9; hour <= 17; hour++) { // 9 AM to 5 PM
+            for (let min = 0; min < 60; min += 30) { // Every 30 minutes
+                let time = hour + ':' + (min < 10 ? '0' : '') + min;
+                options += `<option value="${time}">${time}</option>`;
+            }
+        }
+        return options;
+    }
+</script>
+{% endblock %}
