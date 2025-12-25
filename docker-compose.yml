@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  healthapp:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./medical/user.db:/app/medical/user.db
